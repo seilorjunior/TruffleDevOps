@@ -207,7 +207,7 @@ stages:
           - task: AzureCLI@2
             displayName: Configure API
             inputs:
-              azureSubscription: "ca-dbrown-demo-test(d3b805bb-2146-42a2-93fd-0b67c338317e)"
+              azureSubscription: "Web3DevOps"
               scriptType: "pscore"
               scriptLocation: "inlineScript"
               inlineScript: "az staticwebapp appsettings set --name $(swaName) --setting-names networkAddress=$(contractAddress) networkAddress_$(networkId)=$(contractAddress)"          
