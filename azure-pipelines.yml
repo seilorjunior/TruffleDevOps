@@ -155,26 +155,28 @@ stages:
             env:
               DEV_NETWORK: $(ganacheIp)
           - pwsh: |
-            # Load the contract JSON that should have a single network property
-            # after the contract migration above
-            $contract = Get-Content ./client/src/contracts/SimpleStorage.json | ConvertFrom-Json
-            
-            # The networkId is the name of the only property in the networks object
-            $networkId = $contract.networks[0] | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty name
+              # Load the contract JSON that should have a single network property
+              # after the contract migration above
+              $contract = Get-Content ./client/src/contracts/SimpleStorage.json | ConvertFrom-Json
+              
+              # The networkId is the name of the only property in the networks object
+              $networkId = $contract.networks[0] | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty name
 
-            # Get the address property
-            $address = $contract.networks.$networkId.address
+              # Get the address property
+              $address = $contract.networks.$networkId.address
 
-            if($address) {
-              Write-Host "##[section]Contract address: $address"
-            } else {
-              Write-Host "##vso[task.logissue type=error]Address not found"
-            }
+              if($address) {
+                Write-Host "##[section]Contract address: $address"
+              } else {
+                Write-Host "##vso[task.logissue type=error]Address not found"
+              }
 
-            Write-Host "##vso[task.setvariable variable=networkId;isOutput=true]$networkId"
-            Write-Host "##vso[task.setvariable variable=contractAddress;isOutput=true]$address"
-          displayName: "Find contract address"
-            
+              Write-Host "##vso[task.setvariable variable=networkId;isOutput=true]$networkId"
+              Write-Host "##vso[task.setvariable variable=contractAddress;isOutput=true]$address"
+            displayName: "Find contract address"
+            name: "Contract"
+            workingDirectory: "$(Agent.BuildDirectory)/contracts"
+              
       - job: deploy_frontend
         dependsOn:
           - iac
