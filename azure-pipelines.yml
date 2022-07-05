@@ -201,6 +201,7 @@ stages:
               api_location: api
               app_location: client
               skip_app_build: true
+              skip_api_build: true
               workingDirectory: $(Pipeline.Workspace)
               azure_static_web_apps_api_token: $(deploymentToken)
 
