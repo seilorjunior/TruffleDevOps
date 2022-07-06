@@ -219,12 +219,12 @@ stages:
               Write-Host "Writing summary to $summaryPath"
               $data = @"
               ## SPA Information
-              App URL: [https://$($AZURESTATICWEBAPP_STATIC_WEB_APP_URL)](https://$($AZURESTATICWEBAPP_STATIC_WEB_APP_URL))
+              App URL: [https://$($env.AZURESTATICWEBAPP_STATIC_WEB_APP_URL)](https://$($env.AZURESTATICWEBAPP_STATIC_WEB_APP_URL))
               
               ## Contract Information
-              Ganache IP: [http://$($env:DEV_NETWORK):8545](http://$($env:DEV_NETWORK):8545)
-              Network ID: $networkId
-              Contract Address: $address
+              Ganache IP: [http://$(ganacheIp):8545](http://$(ganacheIp):8545)
+              Network ID: $(networkId)
+              Contract Address: $(contractAddress)
               "@
               Set-Content -Path $summaryPath -Value $data -Verbose
               Write-Host "##vso[task.addattachment type=Distributedtask.Core.Summary;name=Contract Information;]$summaryPath"
