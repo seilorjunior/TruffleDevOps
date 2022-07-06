@@ -171,9 +171,9 @@ stages:
                 Write-Host "##vso[task.logissue type=error]Address not found"
               }
 
-              $summaryPath = "$(Agent.BuildDirectory)/contracts/address.md"
+              $summaryPath = "$(Agent.BuildDirectory)/contracts/Contract_Information.md"
               Write-Host "Writing summary to $summaryPath"
-              Set-Content -Path $summaryPath -Value "# Contract Information`nGanache [IP](http://$($env:DEV_NETWORK):8545)`nNetwork ID: $networkId`nContract Address: $address" -Verbose
+              Set-Content -Path $summaryPath -Value "# Contract Information`nGanache IP [http://$($env:DEV_NETWORK):8545](http://$($env:DEV_NETWORK):8545)`nNetwork ID: $networkId`nContract Address: $address" -Verbose
               Write-Host "##vso[task.uploadsummary]$summaryPath"
 
               Write-Host "##vso[task.setvariable variable=networkId;isOutput=true]$networkId"
