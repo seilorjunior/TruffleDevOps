@@ -214,13 +214,12 @@ stages:
               inlineScript: "az staticwebapp appsettings set --name $(swaName) --setting-names networkAddress=$(contractAddress) networkAddress_$(networkId)=$(contractAddress)"
           - pwsh: |
               dir env: | Out-String
-              
+
               $summaryPath = "$(Agent.BuildDirectory)/contracts/Contract_Information.md"
-              $swaHostname = az staticwebapp show --name $(swaName) --query defaultHostname --output tsv
               Write-Host "Writing summary to $summaryPath"
               $data = @"
               ## SPA Information
-              App URL: [https://$swaHostname](https://$swaHostname)
+              App URL: [https://$($AZURESTATICWEBAPP_STATIC_WEB_APP_URL)](https://$($AZURESTATICWEBAPP_STATIC_WEB_APP_URL))
               
               ## Contract Information
               Ganache IP: [http://$($env:DEV_NETWORK):8545](http://$($env:DEV_NETWORK):8545)
