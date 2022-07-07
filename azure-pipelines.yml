@@ -228,12 +228,10 @@ stages:
                 $logs = az container logs --container ganache --resource-group $(resourceGroup)-dev --name $(ganacheName)
                 
                 # Get first address
-                $address = ($logs | 
-                  Select-String '\(0\) ([^\(]+) \(').Matches.Groups[1].Value 
+                $address = ($logs | Select-String '\(0\) ([^\(]+) \(').Matches.Groups[1].Value 
 
                 # Get first private key
-                $key = ($logs | 
-                  Select-String '\(0\) ([^\(]{64,})').Matches.Groups[1].Value
+                $key = ($logs | Select-String '\(0\) ([^\(]{64,})').Matches.Groups[1].Value
 
                 $summaryPath = "$(Agent.BuildDirectory)/contracts/Contract_Information.md"
                 Write-Host "Writing summary to $summaryPath"
