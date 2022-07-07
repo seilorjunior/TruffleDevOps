@@ -186,6 +186,8 @@ stages:
           # map the output variable from build stage into this job
           swaName: $[ dependencies.IaC.outputs['deploy.swaName'] ]
           ganacheIp: $[ dependencies.IaC.outputs['deploy.ganacheIp'] ]
+          ganacheFqdn: $[ dependencies.IaC.outputs['deploy.ganacheFqdn'] ]
+          ganacheName: $[ dependencies.IaC.outputs['deploy.ganacheName'] ]
           deploymentToken: $[ dependencies.IaC.outputs['deploy.deploymentToken'] ]
           networkId: $[ dependencies.Deploy_Contracts.outputs['contract.networkId'] ]
           contractAddress: $[ dependencies.Deploy_Contracts.outputs['contract.contractAddress'] ]
@@ -213,27 +215,43 @@ stages:
               scriptType: "pscore"
               scriptLocation: "inlineScript"
               inlineScript: "az staticwebapp appsettings set --name $(swaName) --setting-names networkAddress=$(contractAddress) networkAddress_$(networkId)=$(contractAddress)"
-          - pwsh: |
-              dir env: | Out-String
 
-              $summaryPath = "$(Agent.BuildDirectory)/contracts/Contract_Information.md"
-              Write-Host "Writing summary to $summaryPath"
-              $data = @"
-              ### SPA Information
-              App URL: [$($env:AZURESTATICWEBAPP_STATIC_WEB_APP_URL)]($($env:AZURESTATICWEBAPP_STATIC_WEB_APP_URL))
-              
-              ### Contract Information
-              Ganache IP: [http://$(ganacheIp):8545](http://$(ganacheIp):8545)
-              Network ID: $(networkId)
-              Contract Address: $(contractAddress)
-
-              ### Account Information
-              Address:
-              Private Key:
-              "@
-              Set-Content -Path $summaryPath -Value $data -Verbose
-              Write-Host "##vso[task.addattachment type=Distributedtask.Core.Summary;name=dApp Information;]$summaryPath"
+          - task: AzureCLI@2
             displayName: "Update summary"
+            inputs:
+              azureSubscription: "Web3DevOps"
+              scriptType: "pscore"
+              scriptLocation: "inlineScript"
+              inlineScript: |
+                dir env: | Out-String
+
+                $logs = az container logs --container ganache --resource-group $(resourceGroup)-dev --name $(ganacheName)
+                
+                # Get first address
+                $address = ($logs | 
+                  Select-String '\(0\) ([^\(]+) \(').Matches.Groups[1].Value 
+
+                # Get first private key
+                $key = ($logs | 
+                  Select-String '\(0\) ([^\(]{64,})').Matches.Groups[1].Value
+
+                $summaryPath = "$(Agent.BuildDirectory)/contracts/Contract_Information.md"
+                Write-Host "Writing summary to $summaryPath"
+                $data = @"
+                ### SPA Information
+                App URL: [$($env:AZURESTATICWEBAPP_STATIC_WEB_APP_URL)]($($env:AZURESTATICWEBAPP_STATIC_WEB_APP_URL))
+                
+                ### Contract Information
+                Ganache IP: [http://$(ganacheIp):8545](http://$(ganacheIp):8545)
+                Network ID: $(networkId)
+                Contract Address: $(contractAddress)
+
+                ### Account Information
+                Address: $address
+                Private Key: $key
+                "@
+                Set-Content -Path $summaryPath -Value $data -Verbose
+                Write-Host "##vso[task.addattachment type=Distributedtask.Core.Summary;name=dApp Information;]$summaryPath"
   - stage: dev_validation
     dependsOn: dev
     jobs:
