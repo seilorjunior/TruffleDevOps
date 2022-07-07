@@ -219,16 +219,20 @@ stages:
               $summaryPath = "$(Agent.BuildDirectory)/contracts/Contract_Information.md"
               Write-Host "Writing summary to $summaryPath"
               $data = @"
-              ## SPA Information
-              App URL: [https://$($env:AZURESTATICWEBAPP_STATIC_WEB_APP_URL)](https://$($env:AZURESTATICWEBAPP_STATIC_WEB_APP_URL))
+              ### SPA Information
+              App URL: [$($env:AZURESTATICWEBAPP_STATIC_WEB_APP_URL)]($($env:AZURESTATICWEBAPP_STATIC_WEB_APP_URL))
               
-              ## Contract Information
+              ### Contract Information
               Ganache IP: [http://$(ganacheIp):8545](http://$(ganacheIp):8545)
               Network ID: $(networkId)
               Contract Address: $(contractAddress)
+
+              ### Account Information
+              Address:
+              Private Key:
               "@
               Set-Content -Path $summaryPath -Value $data -Verbose
-              Write-Host "##vso[task.addattachment type=Distributedtask.Core.Summary;name=Contract Information;]$summaryPath"
+              Write-Host "##vso[task.addattachment type=Distributedtask.Core.Summary;name=dApp Information;]$summaryPath"
             displayName: "Update summary"
   - stage: dev_validation
     dependsOn: dev
