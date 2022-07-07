@@ -152,6 +152,7 @@ stages:
           - script: "npx truffle migrate --network development --reset --compile-none"
             displayName: "Deploy contracts"
             workingDirectory: "$(Agent.BuildDirectory)/contracts"
+            # this is used in the migration script
             env:
               DEV_NETWORK: $(ganacheIp)
           - pwsh: |
@@ -219,7 +220,7 @@ stages:
               Write-Host "Writing summary to $summaryPath"
               $data = @"
               ## SPA Information
-              App URL: [https://$($env.AZURESTATICWEBAPP_STATIC_WEB_APP_URL)](https://$($env.AZURESTATICWEBAPP_STATIC_WEB_APP_URL))
+              App URL: [https://$($env:AZURESTATICWEBAPP_STATIC_WEB_APP_URL)](https://$($env:AZURESTATICWEBAPP_STATIC_WEB_APP_URL))
               
               ## Contract Information
               Ganache IP: [http://$(ganacheIp):8545](http://$(ganacheIp):8545)
