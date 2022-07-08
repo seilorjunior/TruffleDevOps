@@ -45,6 +45,7 @@ $deploymentToken = $deployment.properties.outputs.deploymentToken.value
 
 if ($deployGanache.IsPresent) {
     $ganacheIp = $deployment.properties.outputs.ganacheIp.value
+    $ganacheName = $deployment.properties.outputs.ganacheName.value
     $ganacheFqdn = $deployment.properties.outputs.ganacheFqdn.value
     Write-Host "The IP of Ganache is http://$($ganacheIp):8545"
     Write-Host "The FQDN of Ganache is http://$($ganacheFqdn):8545"
