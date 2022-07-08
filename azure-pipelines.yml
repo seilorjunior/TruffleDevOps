@@ -225,7 +225,12 @@ stages:
               inlineScript: |
                 dir env: | Out-String
 
-                $logs = az container logs --container ganache --resource-group $(resourceGroup)-dev --name $(ganacheName)
+                Write-Host "ganacheName: $(ganacheName)"
+                Write-Host "resourceGroup: $(resourceGroup)"
+                
+                $logs = az container logs --container ganache --resource-group $(resourceGroup) --name $(ganacheName)
+
+                Write-Host "logs: $logs"
                 
                 # Get first address
                 $address = ($logs | Select-String '\(0\) ([^\(]+) \(').Matches.Groups[1].Value 
