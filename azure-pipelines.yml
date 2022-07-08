@@ -240,6 +240,8 @@ stages:
               inlineScript: |
                 dir env: | Out-String
 
+                Write-Host "ganacheIp: $(ganacheIp)"
+                Write-Host "ganacheFqdn: $(ganacheFqdn)"
                 Write-Host "ganacheName: $(ganacheName)"
                 Write-Host "resourceGroup: $(resourceGroup)"
                 
@@ -261,6 +263,7 @@ stages:
                 
                 ### Contract Information
                 Ganache IP: [http://$(ganacheIp):8545](http://$(ganacheIp):8545)
+                Ganache FQDN: [http://$(ganacheFqdn):8545](http://$(ganacheFqdn):8545)
                 Network ID: $(networkId)
                 Contract Address: $(contractAddress)
 
