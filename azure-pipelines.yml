@@ -140,6 +140,7 @@ stages:
         variables:
           # map the output variable from build stage into this job
           ganacheIp: $[ dependencies.IaC.outputs['deploy.ganacheIp'] ]
+          ganacheName: $[ dependencies.IaC.outputs['deploy.ganacheName'] ]
         steps:
           - checkout: none
           - download: none
@@ -149,6 +150,20 @@ stages:
           - script: npm install
             displayName: "Install Truffle"
             workingDirectory: "$(Agent.BuildDirectory)/contracts"
+          # Before deploying the contracts restart the container. If you don't
+          # the same container could be running for days and the logs will no 
+          # longer have the accounts and private keys in them.
+          - task: AzureCLI@2
+            displayName: "Restart Ganache"
+            inputs:
+              azureSubscription: "Web3DevOps"
+              scriptType: "pscore"
+              scriptLocation: "inlineScript"
+              inlineScript: |
+                Write-Host "ganacheName: $(ganacheName)"
+                Write-Host "resourceGroup: $(resourceGroup)"
+                
+                az container restart --resource-group $(resourceGroup)-dev --name $(ganacheName)
           - script: "npx truffle migrate --network development --reset --compile-none"
             displayName: "Deploy contracts"
             workingDirectory: "$(Agent.BuildDirectory)/contracts"
